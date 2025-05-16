@@ -1,1 +1,1 @@
-# Freedomx-games
+# Freedomxgames
