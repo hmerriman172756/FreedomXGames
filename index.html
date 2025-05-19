@@ -4,9 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FreedomX Games</title>
-  <link rel="stylesheet" href="style.css" />
-
-  <!-- Load Web3Modal and Ethers -->
+  <link rel="stylesheet" href="style.css?v=1" />
   <script src="https://unpkg.com/web3modal@3.5.1/dist/index.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 </head>
@@ -15,16 +13,16 @@
     <h1 class="header-title">FreedomX <span class="games-blue">Games</span></h1>
     <p class="subtitle">Win Cash. Prove you’re the best. Sharpest Football minds in the world.</p>
 
-    <button onclick="connectWallet()">Connect Wallet</button>
-    <p id="walletAddress"></p>
+    <button onclick="connectWallet()" id="connectButton">Connect Wallet</button>
+    <button onclick="disconnectWallet()" id="disconnectButton" style="display: none;">Disconnect Wallet</button>
+    <p id="walletAddress" aria-live="polite"></p>
 
-    <!-- Division Boxes (unchanged) -->
     <div class="division-box">
       <h2>Everyday Players</h2>
       <p>Entry: $250</p>
       <strong>Payout Example (100 Players)</strong>
       <p>1st: $7,500<br>2nd: $4,500<br>3rd: $3,000<br>4th: $2,250<br>5th: $1,500</p>
-      <button>Enter</button>
+      <button onclick="enterContest('Everyday Players', '250')">Enter</button>
     </div>
 
     <div class="division-box">
@@ -32,7 +30,7 @@
       <p>Entry: $500</p>
       <strong>Payout Example (100 Players)</strong>
       <p>1st: $15,000<br>2nd: $9,000<br>3rd: $6,000<br>4th: $4,500<br>5th: $3,000</p>
-      <button>Enter</button>
+      <button onclick="enterContest('Semi-Pro', '500')">Enter</button>
     </div>
 
     <div class="division-box">
@@ -40,7 +38,7 @@
       <p>Entry: $1,000</p>
       <strong>Payout Example (100 Players)</strong>
       <p>1st: $30,000<br>2nd: $18,000<br>3rd: $12,000<br>4th: $9,000<br>5th: $6,000</p>
-      <button>Enter</button>
+      <button onclick="enterContest('Pro', '1000')">Enter</button>
     </div>
   </div>
 
@@ -48,33 +46,93 @@
     <p>Powered by FreedomX — Where Liberty Meets the Gridiron.</p>
   </footer>
 
-  <!-- WalletConnect Integration -->
   <script>
     const metadata = {
       name: "FreedomX Games",
       description: "Pick'em Football Platform on Polygon",
-      url: "https://freedomx.us", // your live domain
-      icons: ["https://freedomx.us/logo.png"]
+      url: "https://freedomxgames.com",
+      icons: ["https://freedomxgames.com/logo.png"]
     };
 
     const web3Modal = new window.Web3Modal.default({
-      projectId: "91e6417f5077c81a65b37b6045a6d7c9",
-      walletConnectVersion: "2", // REQUIRED for v2
+      projectId: "6b6b3419257e1130f864ed7aa5dcc4b2",
+      walletConnectVersion: "2",
       standaloneChains: ["eip155:137"],
       themeMode: "dark",
       metadata
     });
 
     async function connectWallet() {
+      const connectButton = document.getElementById("connectButton");
+      connectButton.disabled = true;
+      connectButton.innerText = "Connecting...";
+      try {
+        if (!window.ethereum) {
+          const errorMsg = "MetaMask not detected. Install it at https://metamask.io/download/";
+          console.error(errorMsg);
+          alert(errorMsg);
+          window.open("https://metamask.io/download/", "_blank");
+          throw new Error(errorMsg);
+        }
+        const provider = await web3Modal.connect();
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const network = await ethersProvider.getNetwork();
+        console.log("Connected network:", network);
+        if (network.chainId !== 137) {
+          try {
+            await ethersProvider.send("wallet_switchEthereumChain", [{ chainId: "0x89" }]);
+          } catch (switchError) {
+            console.error("Network switch error:", switchError);
+            throw new Error("Please switch to Polygon Mainnet in MetaMask.");
+          }
+        }
+        const signer = ethersProvider.getSigner();
+        const address = await signer.getAddress();
+        console.log("Connected address:", address);
+        document.getElementById("walletAddress").innerText = "Wallet: " + address;
+        connectButton.innerText = "Connected";
+        document.getElementById("disconnectButton").style.display = "inline-block";
+      } catch (err) {
+        console.error("Wallet connection error:", err.message, err.stack);
+        alert(`Failed to connect wallet: ${err.message || "Unknown error"}`);
+        connectButton.disabled = false;
+        connectButton.innerText = "Connect Wallet";
+      }
+    }
+
+    async function disconnectWallet() {
+      try {
+        await web3Modal.clearCachedProvider();
+        document.getElementById("walletAddress").innerText = "";
+        document.getElementById("connectButton").innerText = "Connect Wallet";
+        document.getElementById("connectButton").disabled = false;
+        document.getElementById("disconnectButton").style.display = "none";
+      } catch (err) {
+        console.error("Disconnect error:", err.message);
+        alert("Failed to disconnect wallet.");
+      }
+    }
+
+    async function enterContest(division, entryFee) {
       try {
         const provider = await web3Modal.connect();
         const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const network = await ethersProvider.getNetwork();
+        if (network.chainId !== 137) {
+          alert("Please switch to Polygon Mainnet.");
+          return;
+        }
         const signer = ethersProvider.getSigner();
-        const address = await signer.getAddress();
-        document.getElementById("walletAddress").innerText = "Wallet: " + address;
+        const contractAddress = "YOUR_CONTRACT_ADDRESS"; // Update with your contract address
+        const contractABI = []; // Update with your contract ABI
+        const contract = new ethers.Contract(contractAddress, contractABI, signer);
+        // Entry fee in POL (Polygon's native token)
+        const tx = await contract.enterContest({ value: ethers.utils.parseEther(entryFee) });
+        await tx.wait();
+        alert(`Successfully entered ${division} contest!`);
       } catch (err) {
-        console.error("Wallet connection error:", err);
-        alert("Failed to connect wallet.");
+        console.error("Contest entry error:", err.message);
+        alert("Failed to enter contest: " + (err.message || "Unknown error"));
       }
     }
   </script>
