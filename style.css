@@ -12,6 +12,21 @@ body {
   position: relative;
 }
 
+#### **temp.js**
+- Unchanged minimal Node.js script to load `index.html`, ensuring no syntax errors.
+
+```javascript
+const fs = require('fs');
+const path = require('path');
+
+const htmlFile = path.join(__dirname, 'index.html');
+fs.readFile(htmlFile, 'utf8', (err, data) => {
+  if (err) {
+    console.error('Error reading index.html:', err);
+    return;
+  }
+  console.log('index.html loaded successfully');
+});
 /* Subtle X's and O's overlay */
 body::before {
   content: '';
