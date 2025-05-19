@@ -4,18 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FreedomX Games</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 
-  <!-- WalletConnect & Web3 -->
-  <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+  <!-- WalletConnect v2 + Web3 -->
   <script src="https://cdn.jsdelivr.net/npm/web3@1.7.5/dist/web3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.10.6/dist/umd/index.min.js"></script>
 </head>
 <body>
   <div class="container">
     <h1 class="header-title">FreedomX <span class="games-blue">Games</span></h1>
     <p class="subtitle">Win Cash. Prove you’re the best. Sharpest Football minds in the world.</p>
 
-    <button onclick="connectWithWalletConnect()" class="connect-button">Connect Wallet (QR)</button>
+    <button onclick="connectWithWalletConnectV2()" class="connect-button">Connect Wallet</button>
     <p id="walletAddress"></p>
 
     <div class="division-box">
@@ -47,31 +47,26 @@
     <p>Powered by FreedomX — Where Liberty Meets the Gridiron.</p>
   </footer>
 
-  <!-- WalletConnect Connect Logic -->
+  <!-- WalletConnect v2 Logic -->
   <script>
-    async function connectWithWalletConnect() {
-      const provider = new WalletConnectProvider.default({
-        rpc: {
+    async function connectWithWalletConnectV2() {
+      const provider = await EthereumProvider.init({
+        projectId: "91e6417f5077c81a65b37b6045a6d7c9", // Your Project ID
+        chains: [137],
+        showQrModal: true,
+        rpcMap: {
           137: "https://polygon-rpc.com"
         },
-        chainId: 137
+        methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData"],
       });
 
       try {
         await provider.enable();
-
         const web3 = new Web3(provider);
         const accounts = await web3.eth.getAccounts();
-        const walletAddress = accounts[0];
-
-        document.getElementById("walletAddress").innerText = "Wallet: " + walletAddress;
-
-        provider.on("disconnect", (code, reason) => {
-          console.log("Disconnected", code, reason);
-        });
-
+        document.getElementById("walletAddress").innerText = "Wallet: " + accounts[0];
       } catch (err) {
-        console.error("WalletConnect error:", err);
+        console.error("WalletConnect v2 error:", err);
         alert("Connection failed.");
       }
     }
