@@ -1,37 +1,44 @@
-// connect.js
+let provider;
 
 async function connectWithWalletConnect() {
-  const provider = new WalletConnectProvider.default({
+  provider = new WalletConnectProvider.default({
     rpc: {
-      137: "https://polygon-rpc.com" // Polygon Mainnet
+      137: "https://polygon-rpc.com"
     },
     chainId: 137
   });
 
+  provider.on("connect", (info) => {
+    console.log("WalletConnect connected:", info);
+  });
+
+  provider.on("accountsChanged", (accounts) => {
+    console.log("Accounts changed:", accounts);
+    displayAddress(accounts[0]);
+  });
+
+  provider.on("disconnect", (code, reason) => {
+    console.log("WalletConnect disconnected", code, reason);
+    document.getElementById("walletAddress").innerText = "";
+  });
+
   try {
-    // Enable session (triggers QR Code modal)
     await provider.enable();
 
     const web3 = new Web3(provider);
     const accounts = await web3.eth.getAccounts();
-    const walletAddress = accounts[0];
 
-    // Display connected address
-    const walletElement = document.getElementById("walletAddress");
-    if (walletElement) {
-      walletElement.innerText = "Wallet: " + walletAddress;
+    if (accounts && accounts.length > 0) {
+      displayAddress(accounts[0]);
+    } else {
+      alert("No accounts returned.");
     }
-
-    // Handle disconnect
-    provider.on("disconnect", (code, reason) => {
-      console.log("Disconnected:", code, reason);
-      if (walletElement) {
-        walletElement.innerText = "Wallet disconnected.";
-      }
-    });
-
   } catch (err) {
     console.error("WalletConnect error:", err);
-    alert("Failed to connect wallet.");
+    alert("Connection failed.");
   }
+}
+
+function displayAddress(address) {
+  document.getElementById("walletAddress").innerText = `Wallet: ${address}`;
 }
