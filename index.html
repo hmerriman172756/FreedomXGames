@@ -6,26 +6,24 @@
   <title>FreedomX Games</title>
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Web3Modal + WalletConnect v2 -->
+  <!-- Load Web3Modal and Ethers -->
   <script src="https://unpkg.com/web3modal@3.5.1/dist/index.js"></script>
-  <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 </head>
 <body>
   <div class="container">
     <h1 class="header-title">FreedomX <span class="games-blue">Games</span></h1>
     <p class="subtitle">Win Cash. Prove you’re the best. Sharpest Football minds in the world.</p>
-    
+
     <button onclick="connectWallet()">Connect Wallet</button>
     <p id="walletAddress"></p>
 
-    <!-- Game Divisions -->
+    <!-- Division Boxes (unchanged) -->
     <div class="division-box">
       <h2>Everyday Players</h2>
       <p>Entry: $250</p>
       <strong>Payout Example (100 Players)</strong>
-      <p>
-        1st: $7,500<br>2nd: $4,500<br>3rd: $3,000<br>4th: $2,250<br>5th: $1,500
-      </p>
+      <p>1st: $7,500<br>2nd: $4,500<br>3rd: $3,000<br>4th: $2,250<br>5th: $1,500</p>
       <button>Enter</button>
     </div>
 
@@ -33,9 +31,7 @@
       <h2>Semi-Pro</h2>
       <p>Entry: $500</p>
       <strong>Payout Example (100 Players)</strong>
-      <p>
-        1st: $15,000<br>2nd: $9,000<br>3rd: $6,000<br>4th: $4,500<br>5th: $3,000
-      </p>
+      <p>1st: $15,000<br>2nd: $9,000<br>3rd: $6,000<br>4th: $4,500<br>5th: $3,000</p>
       <button>Enter</button>
     </div>
 
@@ -43,9 +39,7 @@
       <h2>Pro</h2>
       <p>Entry: $1,000</p>
       <strong>Payout Example (100 Players)</strong>
-      <p>
-        1st: $30,000<br>2nd: $18,000<br>3rd: $12,000<br>4th: $9,000<br>5th: $6,000
-      </p>
+      <p>1st: $30,000<br>2nd: $18,000<br>3rd: $12,000<br>4th: $9,000<br>5th: $6,000</p>
       <button>Enter</button>
     </div>
   </div>
@@ -54,36 +48,33 @@
     <p>Powered by FreedomX — Where Liberty Meets the Gridiron.</p>
   </footer>
 
-  <!-- WalletConnect via Web3Modal -->
+  <!-- WalletConnect Integration -->
   <script>
-    const providerOptions = {
-      walletconnect: {
-        package: window.Web3Modal.providers.WalletConnectProvider,
-        options: {
-          projectId: "91e6417f5077c81a65b37b6045a6d7c9",
-          rpc: {
-            137: "https://polygon-rpc.com",
-          },
-          chainId: 137
-        }
-      }
+    const metadata = {
+      name: "FreedomX Games",
+      description: "Pick'em Football Platform on Polygon",
+      url: "https://freedomx.us", // your live domain
+      icons: ["https://freedomx.us/logo.png"]
     };
 
     const web3Modal = new window.Web3Modal.default({
-      cacheProvider: false,
-      providerOptions
+      projectId: "91e6417f5077c81a65b37b6045a6d7c9",
+      walletConnectVersion: "2", // REQUIRED for v2
+      standaloneChains: ["eip155:137"],
+      themeMode: "dark",
+      metadata
     });
 
     async function connectWallet() {
       try {
-        const instance = await web3Modal.connect();
-        const provider = new ethers.providers.Web3Provider(instance);
-        const signer = provider.getSigner();
+        const provider = await web3Modal.connect();
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const signer = ethersProvider.getSigner();
         const address = await signer.getAddress();
         document.getElementById("walletAddress").innerText = "Wallet: " + address;
-      } catch (error) {
-        console.error("Connection failed:", error);
-        alert("Wallet connection failed. Please try again.");
+      } catch (err) {
+        console.error("Wallet connection error:", err);
+        alert("Failed to connect wallet.");
       }
     }
   </script>
