@@ -1,11 +1,15 @@
 // connect.js
 
 async function connectWallet() {
-  if (window.ethereum) {
+  if (typeof window.ethereum !== "undefined") {
     try {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts"
+      });
+
       const walletAddress = accounts[0];
-      document.getElementById("walletAddress").innerText = "Wallet: " + walletAddress;
+      document.getElementById("walletAddress").innerText =
+        "Wallet: " + walletAddress;
     } catch (err) {
       console.error("User rejected connection:", err);
     }
