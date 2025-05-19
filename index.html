@@ -1,183 +1,224 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FreedomX Games</title>
+<!-- Basic inline CSS (replace with style.css if available) -->
+<style>
+body {
+font-family: Arial, sans-serif;
+margin: 0;
+padding: 20px;
+background-color: #f4f4f4;
+}
+.container {
+max-width: 1200px;
+margin: 0 auto;
+text-align: center;
+}
+.header-title {
+font-size: 2.5em;
+color: #333;
+}
+.games-blue {
+color: #007bff;
+}
+.subtitle {
+font-size: 1.2em;
+color: #666;
+margin-bottom: 20px;
+}
+button {
+padding: 10px 20px;
+font-size: 1em;
+background-color: #007bff;
+color: white;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+margin: 10px;
+}
+button:hover {
+background-color: #0056b3;
+}
+.division-box {
+display: inline-block;
+width: 30%;
+margin: 10px;
+padding: 20px;
+background-color: white;
+border-radius: 8px;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+text-align: left;
+}
+.division-box h2 {
+font-size: 1.5em;
+color: #333;
+}
+.division-box p {
+margin: 5px 0;
+color: #555;
+}
+footer {
+margin-top: 20px;
+text-align: center;
+color: #666;
+}
+#walletAddress {
+font-size: 1em;
+color: #333;
+word-break: break-all;
+}
+@media (max-width: 768px) {
+.division-box {
+width: 100%;
+}
+}
+</style>
 
-  <meta charset="UTF-8" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>FreedomX Games</title>
-
-  <link rel="stylesheet" href="style.css" />
-
-
-
-  <!-- Web3 + WalletConnect V2 -->
-
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.7.5/dist/web3.min.js" defer></script>
-
-  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.10.6/dist/umd/index.min.js"></script>
-
+<!-- Web3.js v4.x and WalletConnect V2 -->
+<script src="https://cdn.jsdelivr.net/npm/web3@4.0.0/dist/web3.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.10.6/dist/umd/index.min.js"></script>
 </head>
-
 <body>
-
-  <div class="container">
-
-    <h1 class="header-title">FreedomX <span class="games-blue">Games</span></h1>
-
-    <p class="subtitle">Win Cash. Prove you’re the best. Sharpest Football minds in the world.</p>
-
-    <button aria-label="Connect your wallet" onclick="connectWallet()">Connect Wallet</button>
-
-    <p id="walletAddress"></p>
-
-
-
-    <div class="division-box">
-
-      <h2>Everyday Players</h2>
-
-      <p>Entry: $250</p>
-
-      <p><strong>Payout Example (100 Players)</strong></p>
-
-      <p>1st: $7,500<br>2nd: $4,500<br>3rd: $3,000<br>4th: $2,250<br>5th: $1,500</p>
-
-      <button>Enter</button>
-
-    </div>
-
-
-
-    <div class="division-box">
-
-      <h2>Semi-Pro</h2>
-
-      <p>Entry: $500</p>
-
-      <p><strong>Payout Example (100 Players)</strong></p>
-
-      <p>1st: $15,000<br>2nd: $9,000<br>3rd: $6,000<br>4th: $4,500<br>5th: $3,000</p>
-
-      <button>Enter</button>
-
-    </div>
-
-
-
-    <div class="division-box">
-
-      <h2>Pro</h2>
-
-      <p>Entry: $1,000</p>
-
-      <p><strong>Payout Example (100 Players)</strong></p>
-
-      <p>1st: $30,000<br>2nd: $18,000<br>3rd: $12,000<br>4th: $9,000<br>5th: $6,000</p>
-
-      <button>Enter</button>
-
-    </div>
-
-  </div>
-
-
-
-  <footer>
-
-    <p>Powered by FreedomX — Where Liberty Meets the Gridiron.</p>
-
-  </footer>
-
-
-
-  <!-- WalletConnect QR Code Logic -->
-
-  <script>
-
-    window.addEventListener("load", () => {
-
-      if (typeof EthereumProvider === "undefined") {
-
-        console.error("WalletConnect not loaded. Please refresh the page.");
-
-      }
-
-    });
-
-
-
-    async function connectWallet() {
-
-      if (typeof EthereumProvider === "undefined") {
-
-        alert("WalletConnect not loaded. Please refresh the page.");
-
-        return;
-
-      }
-
-
-
-      const provider = await EthereumProvider.init({
-
-        projectId: "91e6417f5077c81a65b37b6045a6d7c9", // Your WalletConnect Project ID
-
-        chains: [137], // Polygon
-
-        showQrModal: true,
-
-        rpcMap: {
-
-          137: "https://polygon-rpc.com"
-
-        },
-
-        methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData"]
-
-      });
-
-
-
-      try {
-
-        await provider.enable();
-
-
-
-        const web3 = new Web3(provider);
-
-        const accounts = await web3.eth.getAccounts();
-
-        const address = accounts[0];
-
-
-
-        document.getElementById("walletAddress").innerText = "Wallet: " + address;
-
-
-
-        provider.on("disconnect", () => {
-
-          document.getElementById("walletAddress").innerText = "";
-
-        });
-
-      } catch (error) {
-
-        console.error("WalletConnect error:", error);
-
-        alert("Connection failed. Please try again.");
-
-      }
-
-    }
-
-  </script>
-
+<div class="container">
+<h1 class="header-title">FreedomX <span class="games-blue">Games</span></h1>
+<p class="subtitle">Win Cash. Prove you’re the best. Sharpest Football minds in the world.</p>
+<button aria-label="Connect your wallet" onclick="connectWallet()">Connect Wallet</button>
+<p id="walletAddress" aria-live="polite"></p>
+
+<div class="division-box">
+<h2>Everyday Players</h2>
+<p>Entry: $250</p>
+<p><strong>Payout Example (100 Players)</strong></p>
+<p>1st: $7,500<br>2nd: $4,500<br>3rd: $3,000<br>4th: $2,250<br>5th: $1,500</p>
+<button aria-label="Enter Everyday Players Division" onclick="enterGame('Everyday', '250')">Enter</button>
+</div>
+
+<div class="division-box">
+<h2>Semi-Pro</h2>
+<p>Entry: $500</p>
+<p><strong>Payout Example (100 Players)</strong></p>
+<p>1st: $15,000<br>2nd: $9,000<br>3rd: $6,000<br>4th: $4,500<br>5th: $3,000</p>
+<button aria-label="Enter Semi-Pro Division" onclick="enterGame('Semi-Pro', '500')">Enter</button>
+</div>
+
+<div class="division-box">
+<h2>Pro</h2>
+<p>Entry: $1,000</p>
+<p><strong>Payout Example (100 Players)</strong></p>
+<p>1st: $30,000<br>2nd: $18,000<br>3rd: $12,000<br>4th: $9,000<br>5th: $6,000</p>
+<button aria-label="Enter Pro Division" onclick="enterGame('Pro', '1000')">Enter</button>
+</div>
+</div>
+
+<footer>
+<p>Powered by FreedomX — Where Liberty Meets the Gridiron.</p>
+</footer>
+
+<!-- WalletConnect and Web3 Logic -->
+<script>
+// Fallback if Web3 or WalletConnect fails toVELoad
+window.addEventListener("load", () => {
+if (typeof Web3 === "undefined" || typeof EthereumProvider === "undefined") {
+alert("Failed to load Web3 or WalletConnect libraries. Please refresh the page.");
+console.error("Web3 or WalletConnect not loaded.");
+}
+});
+
+let provider = null; // Store provider globally for reuse
+let web3 = null; // Store Web3 instance
+
+async function connectWallet() {
+const walletAddressElement = document.getElementById("walletAddress");
+walletAddressElement.innerText = "Connecting...";
+
+if (typeof EthereumProvider === "undefined") {
+walletAddressElement.innerText = "";
+alert("WalletConnect not loaded. Please refresh the page.");
+return;
+}
+
+try {
+// Initialize WalletConnect provider
+provider = await EthereumProvider.init({
+projectId: "YOUR_WALLETCONNECT_PROJECT_ID", // Replace with your project ID or use env variable
+chains: [137], // Polygon Mainnet
+showQrModal: true,
+rpcMap: {
+137: "https://polygon-mainnet.infura.io/v3/YOUR_INFURA_KEY" // Replace with your Infura/Alchemy key
+},
+methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData"]
+});
+
+// Enable provider (prompts QR code or wallet connection)
+await provider.enable();
+
+// Initialize Web3 with the provider
+web3 = new Web3(provider);
+
+// Get the user's wallet address
+const accounts = await web3.eth.getAccounts();
+const address = accounts[0];
+
+// Display the address
+walletAddressElement.innerText = `Wallet: ${address}`;
+
+// Handle disconnect event
+provider.on("disconnect", () => {
+walletAddressElement.innerText = "";
+alert("Wallet disconnected.");
+provider = null;
+web3 = null;
+});
+
+// Handle chain change
+provider.on("chainChanged", (chainId) => {
+if (parseInt(chainId) !== 137) {
+alert("Please switch to the Polygon network.");
+}
+});
+} catch (error) {
+walletAddressElement.innerText = "";
+if (error.message.includes("User rejected")) {
+alert("Connection rejected. Please approve the connection in your wallet.");
+} else if (error.message.includes("No wallet")) {
+alert("No wallet detected. Please install a wallet like MetaMask or Trust Wallet.");
+} else {
+alert("Failed to connect wallet. Please try again or check your network.");
+}
+console.error("WalletConnect error:", error);
+}
+}
+
+async function enterGame(division, entryFeeUSD) {
+if (!web3 || !provider) {
+alert("Please connect your wallet first.");
+return;
+}
+
+try {
+// Placeholder: Replace with your smart contract logic
+// Example: Interact with a smart contract to enter the game
+/*
+const contractAddress = "YOUR_CONTRACT_ADDRESS";
+const contractABI = []; // Your contract ABI
+const contract = new web3.eth.Contract(contractABI, contractAddress);
+const entryFeeWei = web3.utils.toWei(entryFeeUSD, "usd"); // Convert USD to Wei (requires price oracle)
+await contract.methods.enterGame(division).send({
+from: (await web3.eth.getAccounts())[0],
+value: entryFeeWei
+});
+alert(`Successfully entered ${division} division!`);
+*/
+
+alert(`Entering ${division} division (Entry: $${entryFeeUSD}) - Smart contract integration pending.`);
+} catch (error) {
+alert("Failed to enter game. Please try again.");
+console.error("Enter game error:", error);
+}
+}
+</script>
 </body>
-
 </html>
