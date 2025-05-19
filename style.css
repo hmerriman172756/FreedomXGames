@@ -1,65 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FreedomX Games</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/web3modal@3.5.1/dist/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1 class="header-title">FreedomX <span class="games-blue">Games</span></h1>
+    <p class="subtitle">Win Cash. Prove you’re the best. Sharpest Football minds in the world.</p>
 
-body {
-  background-image: url('freedomx_chalkboard_background.png');
-  background-size: cover;
-  background-position: center;
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  padding: 0;
-  color: #ffffff;
-  text-align: center;
-}
+    <button onclick="connectWallet()" id="connectButton">Connect Wallet</button>
+    <button onclick="disconnectWallet()" id="disconnectButton" style="display: none;">Disconnect Wallet</button>
+    <p id="walletAddress" aria-live="polite"></p>
 
-.container {
-  padding: 2rem;
-  background-color: rgba(0, 0, 0, 0.75);
-}
+    <div class="division-box">
+      <h2>Everyday Players</h2>
+      <p>Entry: $250</p>
+      <strong>Payout Example (100 Players)</strong>
+      <p>1st: $7,500<br>2nd: $4,500<br>3rd: $3,000<br>4th: $2,250<br>5th: $1,500</p>
+      <button onclick="enterContest('Everyday Players', '250')">Enter</button>
+    </div>
 
-.header-title {
-  font-size: 3rem;
-  color: #ffffff;
-  margin-bottom: 0.5rem;
-}
+    <div class="division-box">
+      <h2>Semi-Pro</h2>
+      <p>Entry: $500</p>
+      <strong>Payout Example (100 Players)</strong>
+      <p>1st: $15,000<br>2nd: $9,000<br>3rd: $6,000<br>4th: $4,500<br>5th: $3,000</p>
+      <button onclick="enterContest('Semi-Pro', '500')">Enter</button>
+    </div>
 
-.games-blue {
-  color: #00bfff;
-}
+    <div class="division-box">
+      <h2>Pro</h2>
+      <p>Entry: $1,000</p>
+      <strong>Payout Example (100 Players)</strong>
+      <p>1st: $30,000<br>2nd: $18,000<br>3rd: $12,000<br>4th: $9,000<br>5th: $6,000</p>
+      <button onclick="enterContest('Pro', '1000')">Enter</button>
+    </div>
+  </div>
 
-.subtitle {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  color: #00bfff;
-  font-weight: bold;
-}
+  <footer>
+    <p>Powered by FreedomX — Where Liberty Meets the Gridiron.</p>
+  </footer>
 
-.division-box {
-  background-color: #1e1e2f;
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin: 1rem auto;
-  width: 90%;
-  max-width: 600px;
-  border: 2px solid #207eff;
-  box-shadow: 0 0 15px #ff2c2c;
-}
+  <script>
+    const metadata = {
+      name: "FreedomX Games",
+      description: "Pick'em Football Platform on Polygon",
+      url: "https://freedomx.us",
+      icons: ["https://freedomx.us/logo.png"]
+    };
 
-.division-box h2 {
-  color: #ffffff;
-}
+    const web3Modal = new window.Web3Modal.default({
+      projectId: "6b6b3419257e1130f864ed7aa5dcc4b2", // Updated projectId
+      walletConnectVersion: "2",
+      standaloneChains: ["eip155:137"],
+      themeMode: "dark",
+      metadata
+    });
 
-button {
-  background-color: #ff2c2c;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 1rem;
-}
+    async function connectWallet() {
+      const connectButton = document.getElementById("connectButton");
+      connectButton.disabled = true;
+      connectButton.innerText = "Connecting...";
+      try {
+        const provider = await web3Modal.connect();
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const network = await ethersProvider.getNetwork();
+        if (network.chainId !== 137) {
+          alert("Please switch to the Polygon network.");
+          connectButton.disabled = false;
+          connectButton.innerText = "Connect Wallet";
+          return;
+        }
+        const signer = ethersProvider.getSigner();
+        const address = await signer.getAddress();
+        document.getElementById("walletAddress").innerText = "Wallet: " + address;
+        connectButton.innerText = "Connected";
+        document.getElementById("disconnectButton").style.display = "inline-block";
+      } catch (err) {
+        console.error("Wallet connection error:", err);
+        alert("Failed to connect wallet. Ensure you have a wallet like MetaMask installed.");
+        connectButton.disabled = false;
+        connectButton.innerText = "Connect Wallet";
+      }
+    }
 
-footer {
-  margin-top: 2rem;
-  font-size: 0.9rem;
-  color: #ccc;
-}
+    async function disconnectWallet() {
+      await web3Modal.clearCachedProvider();
+      document.getElementById("walletAddress").innerText = "";
+      document.getElementById("connectButton").innerText = "Connect Wallet";
+      document.getElementById("connectButton").disabled = false;
+      document.getElementById("disconnectButton").style.display = "none";
+    }
+
+    async function enterContest(division, entryFee) {
+      try {
+        const provider = await web3Modal.connect();
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const network = await ethersProvider.getNetwork();
+        if (network.chainId !== 137) {
+          alert("Please switch to the Polygon network.");
+          return;
+        }
+        const signer = ethersProvider.getSigner();
+        const contractAddress = "YOUR_CONTRACT_ADDRESS";
+        const contractABI = []; // Replace with your contract ABI
+        const contract = new ethers.Contract(contractAddress, contractABI, signer);
+        const tx = await contract.enterContest({ value: ethers.utils.parseEther(entryFee) });
+        await tx.wait();
+        alert(`Successfully entered ${division} contest!`);
+      } catch (err) {
+        console.error("Contest entry error:", err);
+        alert("Failed to enter contest. Check your wallet and network.");
+      }
+    }
+  </script>
+</body>
+</html>
