@@ -6,39 +6,46 @@
   <title>FreedomX Games</title>
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Web3 + WalletConnect v2 UMD -->
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.7.5/dist/web3.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.10.6/dist/umd/index.min.js"></script>
+  <!-- Web3Modal + WalletConnect v2 -->
+  <script src="https://unpkg.com/web3modal@3.5.1/dist/index.js"></script>
+  <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 </head>
 <body>
   <div class="container">
     <h1 class="header-title">FreedomX <span class="games-blue">Games</span></h1>
     <p class="subtitle">Win Cash. Prove you’re the best. Sharpest Football minds in the world.</p>
-
+    
     <button onclick="connectWallet()">Connect Wallet</button>
     <p id="walletAddress"></p>
 
+    <!-- Game Divisions -->
     <div class="division-box">
       <h2>Everyday Players</h2>
       <p>Entry: $250</p>
-      <p><strong>Payout Example (100 Players)</strong></p>
-      <p>1st: $7,500<br>2nd: $4,500<br>3rd: $3,000<br>4th: $2,250<br>5th: $1,500</p>
+      <strong>Payout Example (100 Players)</strong>
+      <p>
+        1st: $7,500<br>2nd: $4,500<br>3rd: $3,000<br>4th: $2,250<br>5th: $1,500
+      </p>
       <button>Enter</button>
     </div>
 
     <div class="division-box">
       <h2>Semi-Pro</h2>
       <p>Entry: $500</p>
-      <p><strong>Payout Example (100 Players)</strong></p>
-      <p>1st: $15,000<br>2nd: $9,000<br>3rd: $6,000<br>4th: $4,500<br>5th: $3,000</p>
+      <strong>Payout Example (100 Players)</strong>
+      <p>
+        1st: $15,000<br>2nd: $9,000<br>3rd: $6,000<br>4th: $4,500<br>5th: $3,000
+      </p>
       <button>Enter</button>
     </div>
 
     <div class="division-box">
       <h2>Pro</h2>
       <p>Entry: $1,000</p>
-      <p><strong>Payout Example (100 Players)</strong></p>
-      <p>1st: $30,000<br>2nd: $18,000<br>3rd: $12,000<br>4th: $9,000<br>5th: $6,000</p>
+      <strong>Payout Example (100 Players)</strong>
+      <p>
+        1st: $30,000<br>2nd: $18,000<br>3rd: $12,000<br>4th: $9,000<br>5th: $6,000
+      </p>
       <button>Enter</button>
     </div>
   </div>
@@ -47,40 +54,36 @@
     <p>Powered by FreedomX — Where Liberty Meets the Gridiron.</p>
   </footer>
 
-  <!-- WalletConnect QR Code Logic -->
+  <!-- WalletConnect via Web3Modal -->
   <script>
-    async function connectWallet() {
-      if (typeof EthereumProvider === "undefined") {
-        alert("WalletConnect not loaded. Please refresh the page.");
-        return;
+    const providerOptions = {
+      walletconnect: {
+        package: window.Web3Modal.providers.WalletConnectProvider,
+        options: {
+          projectId: "91e6417f5077c81a65b37b6045a6d7c9",
+          rpc: {
+            137: "https://polygon-rpc.com",
+          },
+          chainId: 137
+        }
       }
+    };
 
-      const provider = await EthereumProvider.init({
-        projectId: "91e6417f5077c81a65b37b6045a6d7c9", // Your WalletConnect Project ID
-        chains: [137], // Polygon
-        showQrModal: true,
-        rpcMap: {
-          137: "https://polygon-rpc.com"
-        },
-        methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData"]
-      });
+    const web3Modal = new window.Web3Modal.default({
+      cacheProvider: false,
+      providerOptions
+    });
 
+    async function connectWallet() {
       try {
-        await provider.enable();
-
-        const web3 = new Web3(provider);
-        const accounts = await web3.eth.getAccounts();
-        const address = accounts[0];
-
+        const instance = await web3Modal.connect();
+        const provider = new ethers.providers.Web3Provider(instance);
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
         document.getElementById("walletAddress").innerText = "Wallet: " + address;
-
-        provider.on("disconnect", () => {
-          document.getElementById("walletAddress").innerText = "";
-        });
-
       } catch (error) {
-        console.error("WalletConnect error:", error);
-        alert("Connection failed.");
+        console.error("Connection failed:", error);
+        alert("Wallet connection failed. Please try again.");
       }
     }
   </script>
