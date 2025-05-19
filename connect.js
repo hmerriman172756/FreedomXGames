@@ -1,19 +1,37 @@
 // connect.js
 
-async function connectWallet() {
-  if (typeof window.ethereum !== "undefined") {
-    try {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts"
-      });
+async function connectWithWalletConnect() {
+  const provider = new WalletConnectProvider.default({
+    rpc: {
+      137: "https://polygon-rpc.com" // Polygon Mainnet
+    },
+    chainId: 137
+  });
 
-      const walletAddress = accounts[0];
-      document.getElementById("walletAddress").innerText =
-        "Wallet: " + walletAddress;
-    } catch (err) {
-      console.error("User rejected connection:", err);
+  try {
+    // Enable session (triggers QR Code modal)
+    await provider.enable();
+
+    const web3 = new Web3(provider);
+    const accounts = await web3.eth.getAccounts();
+    const walletAddress = accounts[0];
+
+    // Display connected address
+    const walletElement = document.getElementById("walletAddress");
+    if (walletElement) {
+      walletElement.innerText = "Wallet: " + walletAddress;
     }
-  } else {
-    alert("No Ethereum wallet found. Please install MetaMask or use WalletConnect.");
+
+    // Handle disconnect
+    provider.on("disconnect", (code, reason) => {
+      console.log("Disconnected:", code, reason);
+      if (walletElement) {
+        walletElement.innerText = "Wallet disconnected.";
+      }
+    });
+
+  } catch (err) {
+    console.error("WalletConnect error:", err);
+    alert("Failed to connect wallet.");
   }
 }
