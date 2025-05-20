@@ -1,33 +1,24 @@
-<button onclick="connectWallet()" id="connectButton" class="chrome-btn">Connect Wallet</button>
-<button onclick="disconnectWallet()" id="disconnectButton" class="chrome-btn" style="display: none;">Disconnect Wallet</button>
-<p id="walletAddress" aria-live="polite"></p>
+position: relative;
+}
 
-<div class="division-box" data-division="everyday">
-<h2>Everyday Players</h2>
-<p>Entry: $250</p>
-<strong>Payout Example (100 Players)</strong>
-<p>1st: $7,500<br>2nd: $4,500<br>3rd: $3,000<br>4th: $2,250<br>5th: $1,500</p>
-<button onclick="enterContest('Everyday Players', '250')" class="enter-btn">Enter with POL</button>
-<button onclick="payWithCrypto('Everyday Players', 250)" class="crypto-btn">Pay with Crypto</button>
-</div>
+#### **temp.js**
+- Unchanged minimal Node.js script to load `index.html`, ensuring no syntax errors.
 
-<div class="division-box" data-division="semi-pro">
-<h2>Semi-Pro</h2>
-<p>Entry: $500</p>
-<strong>Payout Example (100 Players)</strong>
-<p>1st: $15,000<br>2nd: $9,000<br>3rd: $6,000<br>4th: $4,500<br>5th: $3,000</p>
-<button onclick="enterContest('Semi-Pro', '500')" class="enter-btn">Enter with POL</button>
-<button onclick="payWithCrypto('Semi-Pro', 500)" class="crypto-btn">Pay with Crypto</button>
-</div>
+```javascript
+const fs = require('fs');
+const path = require('path');
 
-<div class="division-box" data-division="pro">
-<h2>Pro</h2>
-<p>Entry: $1,000</p>
-<strong>Payout Example (100 Players)</strong>
-<p>1st: $30,000<br>2nd: $18,000<br>3rd: $12,000<br>4th: $9,000<br>5th: $6,000</p>
-<button onclick="enterContest('Pro', '1000')" class="enter-btn">Enter with POL</button>
-<button onclick="payWithCrypto('Pro', 1000)" class="crypto-btn">Pay with Crypto</button>
-</div>
+const htmlFile = path.join(__dirname, 'index.html');
+fs.readFile(htmlFile, 'utf8', (err, data) => {
+  if (err) {
+    console.error('Error reading index.html:', err);
+    return;
+  }
+  console.log('index.html loaded successfully');
+});
+/* Subtle X's and O's overlay */
+body::before {
+  content: '';
 
 
 
