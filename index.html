@@ -1,232 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FreedomX Games</title>
-  <script defer src="https://cdn.jsdelivr.net/npm/web3modal@3.5.1/dist/index.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <style>
-    body {
-      background-image: url('freedomx_chalkboard_background.png'), url('https://via.placeholder.com/1920x1080/1A2A1A/FFFFFF?text=Chalkboard');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-color: #0A0A1A;
-      font-family: 'Orbitron', 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      color: #FFFFFF;
-      text-align: center;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    #webgl-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      opacity: 0.3;
-    }
-
-    body::before {
-      content: 'XO';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      color: #FFFFFF;
-      font-family: 'Courier New', monospace;
-      font-size: 18px;
-      font-weight: bold;
-      opacity: 0.08;
-      background-size: 25px 25px;
-      background-repeat: repeat;
-      animation: drawPlays 10s linear infinite;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    @keyframes drawPlays {
-      0% { background-position: 0 0; }
-      100% { background-position: 25px 25px; }
-    }
-
-    .container {
-      padding: 2rem;
-      background: linear-gradient(135deg, rgba(10, 10, 50, 0.9), rgba(20, 20, 80, 0.7));
-      border-radius: 10px;
-      margin: 1rem auto;
-      max-width: 800px;
-      z-index: 2;
-      position: relative;
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-      animation: fadeIn 1s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .header-title {
-      font-size: 3rem;
-      color: #FFFFFF;
-      margin-bottom: 0.5rem;
-      text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF;
-      animation: neonGlow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes neonGlow {
-      from { text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF; }
-      to { text-shadow: 0 0 15px #00FFFF, 0 0 30px #00FFFF; }
-    }
-
-    .games-blue {
-      color: #00FFFF;
-    }
-
-    .subtitle {
-      font-size: 1.2rem;
-      color: #00FFFF;
-      margin-bottom: 2rem;
-      font-weight: bold;
-      text-shadow: 0 0 5px #00FFFF;
-    }
-
-    .division-box {
-      background: linear-gradient(45deg, rgba(20, 20, 80, 0.95), rgba(50, 50, 120, 0.85));
-      border-radius: 10px;
-      padding: 1.5rem;
-      margin: 1rem auto;
-      width: 90%;
-      max-width: 600px;
-      border: 2px solid #00FFFF;
-      box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
-      z-index: 2;
-      transform: translateY(100px);
-      opacity: 0;
-      animation: slideIn 0.8s ease-out forwards;
-      animation-delay: calc(0.2s * var(--index));
-    }
-
-    .division-box:nth-child(1) { --index: 1; }
-    .division-box:nth-child(2) { --index: 2; }
-    .division-box:nth-child(3) { --index: 3; }
-
-    @keyframes slideIn {
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    .division-box:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
-      transition: all 0.2s ease-in-out;
-    }
-
-    .division-box h2 {
-      font-size: 1.8rem;
-      color: #FFFFFF;
-      margin-bottom: 0.5rem;
-      text-shadow: 0 0 5px #00FFFF;
-    }
-
-    .division-box p, .division-box strong {
-      color: #E0E0FF;
-      font-size: 1rem;
-    }
-
-    button {
-      background: linear-gradient(45deg, #B0B0B0, #FFFFFF);
-      color: #0A0A1A;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      margin: 0.5rem;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-      transition: all: 0.3s ease;
-      animation: pulse 2s infinite;
-    }
-
-    button:hover, button:focus {
-      box-shadow: 0 0 15px #00FFFF, 0 0 25px #00FFFF;
-      transform: scale(1.05);
-      outline: none;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-      100% { transform: scale(1); }
-    }
-
-    .enter-btn {
-      background: linear-gradient(45deg, #8247E5, #A68BFF);
-      color: #FFFFFF;
-      box-shadow: 0 0 10px rgba(130, 71, 229, 0.2);
-    }
-
-    .enter-btn:hover, .enter-btn:focus {
-      box-shadow: 0 0 20px rgba(130, 71, 229, 0.4);
-    }
-
-    .crypto-btn {
-      background: linear-gradient(45deg, #00FF00, #66FF99);
-      color: #0A0A1A;
-      box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
-    }
-
-    .crypto-btn:hover, .crypto-btn:focus {
-      box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
-    }
-
-    button:disabled {
-      background: linear-gradient(45deg, #555, #888);
-      color: #333;
-      cursor: not-allowed;
-      box-shadow: none;
-      animation: none;
-    }
-
-    #walletAddress {
-      color: #00FFFF;
-      margin: 1rem 0;
-      font-size: 1rem;
-      text-shadow: 0 0 5px #00FFFF;
-    }
-
-    footer {
-      margin-top: 2rem;
-      font-size: 0.9rem;
-      color: #E0E0FF;
-      z-index: 2;
-      position: relative;
-      text-shadow: 0 0 5px #00FFFF;
-    }
-
-    @media (max-width: 600px) {
-      .header-title { font-size: 2rem; }
-      .subtitle { font-size: 1rem; }
-      .division-box { padding: 1rem; width: 95%; }
-      button { padding: 8px 16px; font-size: 0.9rem; }
-    }
-
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FreedomX Games</title>
+<link rel="stylesheet" href="/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <canvas id="webgl-bg"></canvas>
-  <div class="container">
-    <h1 class="header-title">FreedomX <span class="games-blue">Games</span></h1>
-    <p class="subtitle">Win Cash. Prove You’re the Best. Sharpest Football Minds in the World.</p>
-
-    <button onclick="connectWallet()"
+<header class="header">
+<h1>FreedomX Games</h1>
+</header>
+<nav class="nav">
+<a href="index.html">Home</a>
+<a href="#games">Games</a>
+<a href="#contests">Contests</a>
+<a href="#wallet">Wallet</a>
+</nav>
+<main class="container">
+<h2>Join the Future of Gaming</h2>
+<p>Welcome to FreedomX Games, where Web3 meets immersive gaming. Enter contests and connect your wallet to play!</p>
+<div class="contest-options">
+<a href="#everyday" class="contest-link">Everyday Players</a>
+<a href="#semi-pro" class="contest-link">Semi-Pro</a>
+<a href="#pro" class="contest-link">Pro</a>
+</div>
+</main>
+<footer class="footer">
+<p>© 2025 FreedomX Games. Powered by Web3.</p>
+</footer>
+</body>
+</html>
