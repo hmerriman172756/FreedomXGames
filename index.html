@@ -1,33 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FreedomX Games</title>
-<link rel="stylesheet" href="/css/style.css">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FreedomX Games</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- WalletConnect & Web3 -->
+  <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.7.5/dist/web3.min.js"></script>
 </head>
 <body>
-<header class="header">
-<h1>FreedomX Games</h1>
-</header>
-<nav class="nav">
-<a href="index.html">Home</a>
-<a href="#games">Games</a>
-<a href="#contests">Contests</a>
-<a href="#wallet">Wallet</a>
-</nav>
-<main class="container">
-<h2>Join the Future of Gaming</h2>
-<p>Welcome to FreedomX Games, where Web3 meets immersive gaming. Enter contests and connect your wallet to play!</p>
-<div class="contest-options">
-<a href="#everyday" class="contest-link">Everyday Players</a>
-<a href="#semi-pro" class="contest-link">Semi-Pro</a>
-<a href="#pro" class="contest-link">Pro</a>
-</div>
-</main>
-<footer class="footer">
-<p>© 2025 FreedomX Games. Powered by Web3.</p>
-</footer>
+  <div class="container">
+    <h1 class="header-title">FreedomX <span class="games-blue">Games</span></h1>
+    <p class="subtitle">Win Cash. Prove you’re the best. Sharpest Football minds in the world.</p>
+
+    <button onclick="connectWithWalletConnect()" class="connect-button">Connect Wallet (QR)</button>
+    <p id="walletAddress"></p>
+
+    <div class="division-box">
+      <h2>Everyday Players</h2>
+      <p>Entry: $250</p>
+      <p><strong>Payout Example (100 Players)</strong></p>
+      <p>1st: $7,500<br>2nd: $4,500<br>3rd: $3,000<br>4th: $2,250<br>5th: $1,500</p>
+      <button>Enter</button>
+    </div>
+
+    <div class="division-box">
+      <h2>Semi-Pro</h2>
+      <p>Entry: $500</p>
+      <p><strong>Payout Example (100 Players)</strong></p>
+      <p>1st: $15,000<br>2nd: $9,000<br>3rd: $6,000<br>4th: $4,500<br>5th: $3,000</p>
+      <button>Enter</button>
+    </div>
+
+    <div class="division-box">
+      <h2>Pro</h2>
+      <p>Entry: $1,000</p>
+      <p><strong>Payout Example (100 Players)</strong></p>
+      <p>1st: $30,000<br>2nd: $18,000<br>3rd: $12,000<br>4th: $9,000<br>5th: $6,000</p>
+      <button>Enter</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>Powered by FreedomX — Where Liberty Meets the Gridiron.</p>
+  </footer>
+
+  <!-- WalletConnect Connect Logic -->
+  <script>
+    async function connectWithWalletConnect() {
+      const provider = new WalletConnectProvider.default({
+        rpc: {
+          137: "https://polygon-rpc.com"
+        },
+        chainId: 137
+      });
+
+      try {
+        await provider.enable();
+
+        const web3 = new Web3(provider);
+        const accounts = await web3.eth.getAccounts();
+        const walletAddress = accounts[0];
+
+        document.getElementById("walletAddress").innerText = "Wallet: " + walletAddress;
+
+        provider.on("disconnect", (code, reason) => {
+          console.log("Disconnected", code, reason);
+        });
+
+      } catch (err) {
+        console.error("WalletConnect error:", err);
+        alert("Connection failed.");
+      }
+    }
+  </script>
 </body>
 </html>
