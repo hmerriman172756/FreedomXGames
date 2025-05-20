@@ -6,17 +6,19 @@
 <title>FreedomX Games</title>
 <link rel="stylesheet" href="style.css" />
 
-<!-- Web3 + WalletConnect V2 UMD -->
-<script src="https://cdn.jsdelivr.net/npm/web3@1.7.5/dist/web3.min.js" defer></script>
+<!-- Web3 + WalletConnect v2 -->
+<script src="https://cdn.jsdelivr.net/npm/web3@1.7.5/dist/web3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.10.6/dist/umd/index.min.js"></script>
 </head>
 <body>
 <div class="container">
 <h1 class="header-title">FreedomX <span class="games-blue">Games</span></h1>
 <p class="subtitle">Win Cash. Prove you’re the best. Sharpest Football minds in the world.</p>
-<button aria-label="Connect your wallet" onclick="connectWallet()">Connect Wallet</button>
+
+<button onclick="connectWallet()">Connect Wallet</button>
 <p id="walletAddress"></p>
 
+<!-- Divisions -->
 <div class="division-box">
 <h2>Everyday Players</h2>
 <p>Entry: $250</p>
@@ -46,14 +48,8 @@
 <p>Powered by FreedomX — Where Liberty Meets the Gridiron.</p>
 </footer>
 
-<!-- WalletConnect QR Code Logic -->
+<!-- WalletConnect Logic -->
 <script>
-window.addEventListener('load', () => {
-if (typeof EthereumProvider === "undefined") {
-console.error("WalletConnect not loaded. Please refresh the page.");
-}
-});
-
 async function connectWallet() {
 if (typeof EthereumProvider === "undefined") {
 alert("WalletConnect not loaded. Please refresh the page.");
@@ -61,8 +57,8 @@ return;
 }
 
 const provider = await EthereumProvider.init({
-projectId: "91e6417f5077c81a65b37b6045a6d7c9", // Your WalletConnect Project ID
-chains: [137], // Polygon
+projectId: "6b6b3419257e1130f864ed7aa5dcc4b2", // ✅ YOUR NEW WalletConnect ID
+chains: [137], // Polygon Chain ID
 showQrModal: true,
 rpcMap: {
 137: "https://polygon-rpc.com"
@@ -72,6 +68,7 @@ methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData"]
 
 try {
 await provider.enable();
+
 const web3 = new Web3(provider);
 const accounts = await web3.eth.getAccounts();
 const address = accounts[0];
@@ -84,7 +81,7 @@ document.getElementById("walletAddress").innerText = "";
 
 } catch (error) {
 console.error("WalletConnect error:", error);
-alert("Connection failed. Please try again.");
+alert("Connection failed.");
 }
 }
 </script>
