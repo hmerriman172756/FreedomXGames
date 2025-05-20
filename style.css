@@ -1,163 +1,30 @@
-body {
-  background-image: url('freedomx_chalkboard_background.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-color: #0A0A1A;
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 0;
-  color: #FFFFFF;
-  text-align: center;
-  position: relative;
-}
+<button onclick="connectWallet()" id="connectButton" class="chrome-btn">Connect Wallet</button>
+<button onclick="disconnectWallet()" id="disconnectButton" class="chrome-btn" style="display: none;">Disconnect Wallet</button>
+<p id="walletAddress" aria-live="polite"></p>
 
-#### **temp.js**
-- Unchanged minimal Node.js script to load `index.html`, ensuring no syntax errors.
+<div class="division-box" data-division="everyday">
+<h2>Everyday Players</h2>
+<p>Entry: $250</p>
+<strong>Payout Example (100 Players)</strong>
+<p>1st: $7,500<br>2nd: $4,500<br>3rd: $3,000<br>4th: $2,250<br>5th: $1,500</p>
+<button onclick="enterContest('Everyday Players', '250')" class="enter-btn">Enter with POL</button>
+<button onclick="payWithCrypto('Everyday Players', 250)" class="crypto-btn">Pay with Crypto</button>
+</div>
 
-```javascript
-const fs = require('fs');
-const path = require('path');
+<div class="division-box" data-division="semi-pro">
+<h2>Semi-Pro</h2>
+<p>Entry: $500</p>
+<strong>Payout Example (100 Players)</strong>
+<p>1st: $15,000<br>2nd: $9,000<br>3rd: $6,000<br>4th: $4,500<br>5th: $3,000</p>
+<button onclick="enterContest('Semi-Pro', '500')" class="enter-btn">Enter with POL</button>
+<button onclick="payWithCrypto('Semi-Pro', 500)" class="crypto-btn">Pay with Crypto</button>
+</div>
 
-const htmlFile = path.join(__dirname, 'index.html');
-fs.readFile(htmlFile, 'utf8', (err, data) => {
-  if (err) {
-    console.error('Error reading index.html:', err);
-    return;
-  }
-  console.log('index.html loaded successfully');
-});
-/* Subtle X's and O's overlay */
-body::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="%23FFFFFF" stroke-width="0.8" opacity="0.05"><text x="6" y="25" font-family=\"Courier New\", monospace font-size="20" fill="%23FFFFFF">X</text><text x="22" y="25" font-family=\"Courier New\", monospace font-size="20" fill="%23FFFFFF">O</text></svg>');
-  background-repeat: repeat;
-  opacity: 0.05;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.container {
-  padding: 1rem;
-  background: rgba(10, 10, 50, 0.95);
-  border-radius: 5px;
-  margin: 0.8rem auto;
-  max-width: 700px;
-  z-index: 2;
-  position: relative;
-}
-
-.header-title {
-  font-size: 2rem;
-  color: #FFFFFF;
-  margin-bottom: 0.4rem;
-  text-shadow: 0 0 4px #00FFFF;
-}
-
-.games-blue {
-  color: #00FFFF;
-}
-
-.subtitle {
-  font-size: 0.95rem;
-  color: #00FFFF;
-  margin-bottom: 0.8rem;
-  font-weight: bold;
-}
-
-.division-box {
-  background: rgba(20, 20, 80, 0.95);
-  border-radius: 4px;
-  padding: 0.7rem;
-  margin: 0.7rem auto;
-  width: 90%;
-  max-width: 350px;
-  border: 1px solid #00FFFF;
-  box-shadow: 0 0 6px rgba(0, 255, 255, 0.15);
-  z-index: 2;
-}
-
-.division-box:hover {
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.25);
-}
-
-.division-box h2 {
-  font-size: 1.3rem;
-  color: #FFFFFF;
-  margin-bottom: 0.3rem;
-}
-
-.division-box p, .division-box strong {
-  color: #E0E0FF;
-  font-size: 0.85rem;
-}
-
-button {
-  background: linear-gradient(45deg, #A0A0A0, #FFFFFF);
-  color: #0A0A1A;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 3px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 0.6rem;
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.15);
-}
-
-button:hover, button:focus {
-  box-shadow: 0 0 8px #00FFFF;
-  outline: none;
-}
-
-.division-box button {
-  background: linear-gradient(45deg, #8247E5, #A68BFF);
-  color: #FFFFFF;
-  box-shadow: 0 0 5px rgba(130, 71, 229, 0.15);
-}
-
-.division-box button:hover, .division-box button:focus {
-  box-shadow: 0 0 10px rgba(130, 71, 229, 0.3);
-}
-
-button:disabled {
-  background: linear-gradient(45deg, #555, #888);
-  color: #333;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-#walletAddress {
-  color: #00FFFF;
-  margin: 0.7rem 0;
-  font-size: 0.85rem;
-}
-
-footer {
-  margin-top: 0.8rem;
-  font-size: 0.75rem;
-  color: #E0E0FF;
-  z-index: 2;
-  position: relative;
-}
-
-@media (max-width: 600px) {
-  .header-title {
-    font-size: 1.5rem;
-  }
-  .subtitle {
-    font-size: 0.85rem;
-  }
-  .division-box {
-    padding: 0.6rem;
-    width: 95%;
-  }
-  button {
-    padding: 5px 10px;
-    font-size: 0.75rem;
-  }
-}
+<div class="division-box" data-division="pro">
+<h2>Pro</h2>
+<p>Entry: $1,000</p>
+<strong>Payout Example (100 Players)</strong>
+<p>1st: $30,000<br>2nd: $18,000<br>3rd: $12,000<br>4th: $9,000<br>5th: $6,000</p>
+<button onclick="enterContest('Pro', '1000')" class="enter-btn">Enter with POL</button>
+<button onclick="payWithCrypto('Pro', 1000)" class="crypto-btn">Pay with Crypto</button>
+</div>
