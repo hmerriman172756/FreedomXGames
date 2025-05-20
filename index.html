@@ -1,128 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FreedomX Games</title>
-<style>
 body {
-font-family: 'Orbitron', Arial, sans-serif;
-margin: 0;
-padding: 0;
-background: #0a0a0a;
-color: #00e6e6;
-line-height: 1.6;
+  background-image: url('freedomx_chalkboard_background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #111; /* Fallback color */
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #ffffff;
+  text-align: center;
+  image-rendering: -webkit-optimize-contrast;
 }
-header {
-background: linear-gradient(45deg, #00e6e6, #9900ff);
-text-align: center;
-padding: 1.5rem;
-box-shadow: 0 0 10px #00e6e6;
-}
-header h1 {
-margin: 0;
-font-size: 2.5rem;
-text-transform: uppercase;
-}
-nav {
-background: rgba(0, 0, 0, 0.7);
-padding: 1rem;
-text-align: center;
-}
-nav a {
-color: #00e6e6;
-text-decoration: none;
-margin: 0 1.5rem;
-font-weight: bold;
-transition: color 0.3s ease;
-}
-nav a:hover {
-color: #9900ff;
-text-shadow: 0 0 5px #9900ff;
-}
+
 .container {
-max-width: 900px;
-margin: 2rem auto;
-padding: 0 1rem;
-text-align: center;
+  padding: 2rem;
+  background-color: rgba(0, 0, 0, 0.75);
 }
-.container h2 {
-color: #fff;
-font-size: 1.8rem;
+
+.header-title {
+  font-size: 3rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
 }
-.contest-options {
-display: flex;
-justify-content: center;
-gap: 1rem;
-margin-top: 1.5rem;
+
+.games-blue {
+  color: #00bfff;
 }
-.contest-options a {
-background: #1a1a1a;
-color: #00e6e6;
-padding: 0.8rem 1.5rem;
-border: 1px solid #00e6e6;
-border-radius: 5px;
-text-decoration: none;
-transition: all 0.3s ease;
+
+.subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #00bfff;
+  font-weight: bold;
 }
-.contest-options a:hover {
-background: #00e6e6;
-color: #0a0a0a;
-box-shadow: 0 0 10px #00e6e6;
+
+.division-box {
+  background-color: #1e1e2f;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 1rem auto;
+  width: 90%;
+  max-width: 600px;
+  border: 2px solid #207eff;
+  box-shadow: 0 0 15px #ff2c2c;
 }
+
+.division-box:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s ease-in-out;
+  box-shadow: 0 0 20px #ff2c2c;
+}
+
+.division-box h2 {
+  color: #ffffff;
+}
+
+button {
+  background-color: #ff2c2c;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+button:hover, button:focus {
+  background-color: #e02424;
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+button:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
 footer {
-background: #1a1a1a;
-text-align: center;
-padding: 1rem;
-color: #00e6e6;
-width: 100%;
-margin-top: 2rem;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: #e0e0e0;
 }
-</style>
-<!-- Google Fonts for futuristic aesthetic -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-</head>
-<body>
-<header>
-<h1>FreedomX Games</h1>
-</header>
-<nav>
-<a href="index.html">Home</a>
-<a href="#games">Games</a>
-<a href="#contests">Contests</a>
-<a href="#wallet">Wallet</a>
-</nav>
-<div class="container">
-<h2>Join the Future of Gaming</h2>
-<p>Welcome to FreedomX Games, where Web3 meets immersive gaming. Enter contests and connect your wallet to play!</p>
-<div class="contest-options">
-<a href="#everyday">Everyday Players</a>
-<a href="#semi-pro">Semi-Pro</a>
-<a href="#pro">Pro</a>
-</div>
-<!-- Placeholder for MetaMask WalletConnect (add later if needed) -->
-<!--
-<button id="connect-wallet" style="background: #9900ff; color: #fff; padding: 0.8rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; margin-top: 1rem;">
-Connect MetaMask
-</button>
-<script>
-async function connectWallet() {
-if (window.ethereum) {
-try {
-await window.ethereum.request({ method: 'eth_requestAccounts' });
-await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x89' }] }); // Polygon
-alert('Wallet connected!');
-} catch (error) {
-console.error('Wallet connection failed:', error);
+
+@media (max-width: 600px) {
+  .header-title {
+    font-size: 2rem;
+  }
+  .subtitle {
+    font-size: 1rem;
+  }
+  .division-box {
+    padding: 1rem;
+    width: 95%;
+  }
+  button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
 }
-}
-}
-document.getElementById('connect-wallet').addEventListener('click', connectWallet);
-</script>
--->
-</div>
-<footer>
-<p>© 2025 FreedomX Games. Powered by Web3.</p>
-</footer>
-</body>
-</html>
