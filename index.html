@@ -1,12 +1,12 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>FreedomX Games</title>
 <link rel="stylesheet" href="style.css" />
 
-<!-- Web3 + WalletConnect v2 -->
+<!-- Web3 & WalletConnect v2 -->
 <script src="https://cdn.jsdelivr.net/npm/web3@1.7.5/dist/web3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.10.6/dist/umd/index.min.js"></script>
 </head>
@@ -30,59 +30,16 @@
 <div class="division-box">
 <h2>Semi-Pro</h2>
 <p>Entry: $500</p>
-<p><strong>Payout Example (100 Players)</strong></p>
-<p>1st: $15,000<br>2nd: $9,000<br>3rd: $6,000<br>4th: $4,500<br>5th: $3,000</p>
-<button>Enter</button>
-</div>
-
-<div class="division-box">
-<h2>Pro</h2>
-<p>Entry: $1,000</p>
-<p><strong>Payout Example (100 Players)</strong></p>
-<p>1st: $30,000<br>2nd: $18,000<br>3rd: $12,000<br>4th: $9,000<br>5th: $6,000</p>
-<button>Enter</button>
 </div>
 </div>
 
-<footer>
-<p>Powered by FreedomX — Where Liberty Meets the Gridiron.</p>
-</footer>
-
-<!-- WalletConnect Logic -->
 <script>
 async function connectWallet() {
-  
-if (typeof EthereumProvider === "undefined") {
-alert("WalletConnect not loaded. Please refresh the page.");
-return;
-}
-
-const provider = await EthereumProvider.init({
-projectId: "6b6b3419257e1130f864ed7aa5dcc4b2", // ✅ YOUR NEW WalletConnect ID
-chains: [137], // Polygon Chain ID
-showQrModal: true,
-rpcMap: {
-137: "https://polygon-rpc.com"
-},
-methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData"]
-});
-
-try {
-await provider.enable();
-
-const web3 = new Web3(provider);
-const accounts = await web3.eth.getAccounts();
-const address = accounts[0];
-
-document.getElementById("walletAddress").innerText = "Wallet: " + address;
-
-provider.on("disconnect", () => {
-document.getElementById("walletAddress").innerText = "";
-});
-
-} catch (error) {
-console.error("WalletConnect error:", error);
-alert("Connection failed.");
+if (window.ethereum) {
+const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+document.getElementById("walletAddress").textContent = `Wallet: ${accounts[0]}`;
+} else {
+alert("Please install MetaMask or use WalletConnect");
 }
 }
 </script>
