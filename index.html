@@ -1,46 +1,30 @@
-!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>FreedomX Games</title>
-<link rel="stylesheet" href="style.css" />
-
-<!-- Web3 & WalletConnect v2 -->
-<script src="https://cdn.jsdelivr.net/npm/web3@1.7.5/dist/web3.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.10.6/dist/umd/index.min.js"></script>
+<title>PickXSOS Connect</title>
+<script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/web3@1.3.6/dist/web3.min.js"></script>
 </head>
 <body>
-<div class="container">
-<h1 class="header-title">FreedomX <span class="games-blue">Games</span></h1>
-<p class="subtitle">Win Cash. Prove you’re the best. Sharpest Football minds in the world.</p>
-
-<button onclick="connectWallet()">Connect Wallet</button>
-<p id="walletAddress"></p>
-
-<!-- Divisions -->
-<div class="division-box">
-<h2>Everyday Players</h2>
-<p>Entry: $250</p>
-<p><strong>Payout Example (100 Players)</strong></p>
-<p>1st: $7,500<br>2nd: $4,500<br>3rd: $3,000<br>4th: $2,250<br>5th: $1,500</p>
-<button>Enter</button>
-</div>
-
-<div class="division-box">
-<h2>Semi-Pro</h2>
-<p>Entry: $500</p>
-</div>
-</div>
+<h1>Connect Wallet</h1>
+<button onclick="connect()">Connect with WalletConnect</button>
 
 <script>
-async function connectWallet() {
-if (window.ethereum) {
-const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-document.getElementById("walletAddress").textContent = `Wallet: ${accounts[0]}`;
-} else {
-alert("Please install MetaMask or use WalletConnect");
-}
+async function connect() {
+const provider = new WalletConnectProvider.default({
+projectId: "6b63419257e1130f864ed7aa5dcc4b2", // ✅ Your WalletConnect ID
+rpc: {
+137: "https://polygon-rpc.com", // Polygon mainnet
+80001: "https://rpc-mumbai.matic.today" // Polygon testnet
+},
+chainId: 137
+});
+
+await provider.enable();
+
+const web3 = new Web3(provider);
+const accounts = await web3.eth.getAccounts();
+alert("Connected: " + accounts[0]);
 }
 </script>
 </body>
